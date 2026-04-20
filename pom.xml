@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- pom.xml: Maven Project Object Model - central build configuration file -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- modelVersion: defines the POM version; always 4.0.0 for Maven 2+ -->
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- groupId: unique organization identifier (reverse domain name convention) -->
+    <groupId>com.framework</groupId>
+
+    <!-- artifactId: name of the project artifact (JAR/WAR) -->
+    <artifactId>hybrid-automation-framework</artifactId>
+
+    <!-- version: project version; SNAPSHOT means it's still in development -->
+    <version>1.0.0-SNAPSHOT</version>
+
+    <!-- packaging: type of artifact Maven will create; jar = standard Java archive -->
+    <packaging>jar</packaging>
+
+    <!-- name & description: human-readable project metadata for documentation -->
+    <name>Hybrid Automation Framework</name>
+    <description>Selenium + REST Assured + Cucumber BDD Hybrid Framework</description>
+
+    <!-- properties: centralized version management to avoid duplication across dependencies -->
+    <properties>
+        <!-- java.version: sets compiler source and target to Java 11 LTS -->
+        <java.version>11</java.version>
+
+        <!-- maven.compiler.source/target: tells Maven which Java version to compile against -->
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+
+        <!-- project.build.sourceEncoding: ensures all source files are read as UTF-8 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Individual version pins - change version in ONE place, applies everywhere -->
+        <selenium.version>4.18.1</selenium.version>           <!-- Selenium WebDriver version -->
+        <rest.assured.version>5.4.0</rest.assured.version>    <!-- REST Assured HTTP client -->
+        <cucumber.version>7.15.0</cucumber.version>           <!-- Cucumber BDD framework -->
+        <testng.version>7.9.0</testng.version>                <!-- TestNG test runner -->
+        <webdrivermanager.version>5.7.0</webdrivermanager.version> <!-- Auto-manages browser drivers -->
+        <log4j.version>2.22.1</log4j.version>                 <!-- Apache Log4j 2 logging -->
+        <jackson.version>2.16.1</jackson.version>             <!-- JSON serialization/deserialization -->
+        <allure.version>2.25.0</allure.version>               <!-- Allure reporting framework -->
+        <extentreports.version>5.1.1</extentreports.version>  <!-- ExtentReports HTML reporter -->
+        <json.schema.validator>5.4.0</json.schema.validator>  <!-- JSON Schema validation -->
+        <apache.poi.version>5.2.5</apache.poi.version>        <!-- Excel file reading (data-driven) -->
+    </properties>
+
+    <dependencies>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!--              SELENIUM WEBDRIVER                      -->
+        <!-- ═══════════════════════════════════════════════════ -->
+
+        <!-- selenium-java: main Selenium dependency, includes WebDriver + all browser support -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+
+        <!-- webdrivermanager: auto-downloads the correct browser driver binary (chromedriver etc.) -->
+        <dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>${webdrivermanager.version}</version>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!--              REST ASSURED (API Testing)             -->
+        <!-- ═══════════════════════════════════════════════════ -->
+
+        <!-- rest-assured: DSL-based HTTP client for API testing -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest.assured.version}</version>
+        </dependency>
+
+        <!-- json-schema-validator: validates API response body against a JSON Schema file -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>${json.schema.validator}</version>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!--              CUCUMBER BDD                           -->
+        <!-- ═══════════════════════════════════════════════════ -->
+
+        <!-- cucumber-java: core Cucumber library for writing step definitions in Java -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>${cucumber.version}</version>
+        </dependency>
+
+        <!-- cucumber-testng: integrates Cucumber with TestNG as the test runner -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-testng</artifactId>
+            <version>${cucumber.version}</version>
+        </dependency>
+
+        <!-- cucumber-picocontainer: enables dependency injection between step definition classes -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-picocontainer</artifactId>
+            <version>${cucumber.version}</version>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!--              TESTNG                                  -->
+        <!-- ═══════════════════════════════════════════════════ -->
+
+        <!-- testng: powerful test runner with parallel execution, grouping, and XML suite support -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!--              LOGGING                                 -->
+        <!-- ═══════════════════════════════════════════════════ -->
+
+        <!-- log4j-core: Log4j 2 core engine for writing log statements -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+
+        <!-- log4j-api: Log4j 2 API - code should program to this interface, not the core -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+
+        <!-- log4j-slf4j2-impl: bridges SLF4J calls (used by REST Assured/Cucumber) into Log4j 2 -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!--              JSON / DATA PROCESSING                  -->
+        <!-- ═══════════════════════════════════════════════════ -->
+
+        <!-- jackson-databind: maps JSON to Java POJOs (ObjectMapper) for test data loading -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <!-- jackson-dataformat-yaml: lets Jackson read YAML config files if needed -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <!-- apache-poi: reads/writes Excel (.xlsx) files for data-driven test data -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${apache.poi.version}</version>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!--              REPORTING                               -->
+        <!-- ═══════════════════════════════════════════════════ -->
+
+        <!-- allure-testng: Allure report integration with TestNG for rich test reports -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-testng</artifactId>
+            <version>${allure.version}</version>
+        </dependency>
+
+        <!-- allure-rest-assured: automatically captures API request/response details in Allure -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-rest-assured</artifactId>
+            <version>${allure.version}</version>
+        </dependency>
+
+        <!-- extentreports: generates rich HTML reports with charts and test step details -->
+        <dependency>
+            <groupId>com.aventstack</groupId>
+            <artifactId>extentreports</artifactId>
+            <version>${extentreports.version}</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <!-- maven-compiler-plugin: configures Java compiler version for the project -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.12.1</version>
+                <configuration>
+                    <!-- source/target: must match the java.version property defined above -->
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+
+            <!-- maven-surefire-plugin: the plugin that actually runs tests during 'mvn test' -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <!-- suiteXmlFiles: points Surefire to our TestNG XML suite configuration -->
+                    <suiteXmlFiles>
+                        <suiteXmlFile>testng.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                    <!-- systemPropertyVariables: pass JVM system props from Maven to the tests -->
+                    <systemPropertyVariables>
+                        <!-- allure.results.directory: where Allure stores raw test result data -->
+                        <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+
+            <!-- allure-maven: generates the final Allure HTML report from raw results -->
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>2.12.0</version>
+                <configuration>
+                    <!-- reportVersion: specifies which Allure CLI version to use for report generation -->
+                    <reportVersion>${allure.version}</reportVersion>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

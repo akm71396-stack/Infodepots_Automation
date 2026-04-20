@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- testng.xml — TestNG Suite Configuration File -->
+<!-- This file controls which tests run, in what order, and how many threads are used -->
+<!-- Referenced by maven-surefire-plugin in pom.xml via <suiteXmlFile>testng.xml</suiteXmlFile> -->
+
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<!-- suite: the root element; represents the entire test execution run -->
+<!-- name: label shown in TestNG reports and CI dashboards -->
+<!-- verbose: logging level 0-10; 2 shows suite/test names + pass/fail; use higher for debugging -->
+<!-- parallel="tests": run each <test> block in parallel; each block gets its own thread pool -->
+<!-- thread-count: max number of threads running simultaneously across all parallel test blocks -->
+<suite name="Hybrid Automation Framework — Full Suite"
+       verbose="2"
+       parallel="tests"
+       thread-count="4">
+
+    <!-- ── Suite-Level Listeners ── -->
+    <!-- listeners apply to the entire suite; add custom reporters or retry listeners here -->
+    <listeners>
+        <!-- TestNG Allure listener: hooks into TestNG lifecycle to capture results for Allure -->
+        <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
+    </listeners>
+
+    <!-- ── Suite-Level Parameters ── -->
+    <!-- These are available to all tests via @Optional @Parameter in TestNG test methods -->
+    <!-- Override at runtime: mvn test -Dbrowser=firefox (JVM property takes priority) -->
+    <parameter name="browser"        value="chrome"/>   <!-- browser: used if not set in config.properties -->
+    <parameter name="headless"       value="false"/>    <!-- headless: false = visible browser, true = CI mode -->
+    <parameter name="execution.mode" value="local"/>    <!-- execution.mode: local or cloud -->
+
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <!--  TEST BLOCK 1: Smoke Tests                                  -->
+    <!--  Runs a small set of critical scenarios on every commit     -->
+    <!--  Fast feedback: should complete in < 5 minutes              -->
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <test name="Smoke Tests — UI + API"
+          preserve-order="true">
+        <!-- preserve-order: runs <classes> in the order listed below -->
+
+        <parameter name="cucumber.filter.tags" value="@smoke"/>
+        <!-- tag filter passed to Cucumber; @smoke runs only fast, critical scenarios -->
+
+        <classes>
+            <!-- class: the TestNG runner class that launches Cucumber -->
+            <class name="com.framework.runners.TestRunner"/>
+        </classes>
+    </test>
+
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <!--  TEST BLOCK 2: Regression — UI Tests Only                   -->
+    <!--  Full UI regression suite; runs on nightly builds or PRs    -->
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <test name="Regression — UI Tests"
+          preserve-order="true">
+
+        <parameter name="cucumber.filter.tags" value="@regression and @ui"/>
+        <!-- @regression and @ui: runs all regression scenarios that require a browser -->
+
+        <classes>
+            <class name="com.framework.runners.TestRunner"/>
+        </classes>
+    </test>
+
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <!--  TEST BLOCK 3: Regression — API Tests Only                  -->
+    <!--  Pure API tests; no browser needed; fastest block           -->
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <test name="Regression — API Tests"
+          preserve-order="true">
+
+        <parameter name="cucumber.filter.tags" value="@regression and @api"/>
+        <!-- @regression and @api: runs all regression API scenarios (no browser) -->
+
+        <classes>
+            <class name="com.framework.runners.TestRunner"/>
+        </classes>
+    </test>
+
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <!--  TEST BLOCK 4: Full Regression (All Tags)                   -->
+    <!--  Complete test suite for release validation                 -->
+    <!--  Runs last in parallel block; most time-consuming           -->
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <test name="Full Regression — All Scenarios"
+          preserve-order="true">
+
+        <parameter name="cucumber.filter.tags" value="@smoke or @regression"/>
+        <!-- no tag filter here = runs every scenario in every feature file -->
+
+        <classes>
+            <class name="com.framework.runners.TestRunner"/>
+        </classes>
+    </test>
+
+</suite>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+  HOW TO RUN:
+  ─────────────────────────────────────────────────────────────────────
+  All scenarios:         mvn clean test
+  Smoke only:            mvn clean test -Dcucumber.filter.tags="@smoke"
+  API only:              mvn clean test -Dcucumber.filter.tags="@api"
+  UI regression:         mvn clean test -Dcucumber.filter.tags="@regression and @ui"
+  Firefox headless:      mvn clean test -Dbrowser=firefox -Dheadless=true
+  Cloud BrowserStack:    mvn clean test -Dexecution.mode=cloud -Dcloud.provider=browserstack
+  Single feature:        mvn clean test -Dcucumber.features="src/test/resources/features/login.feature"
+═══════════════════════════════════════════════════════════════════ -->
